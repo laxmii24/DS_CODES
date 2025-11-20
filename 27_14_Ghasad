@@ -1,0 +1,210 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *left, *right;
+};
+
+struct Node* createNode(int x) {
+    struct Node* n = (struct Node*)malloc(sizeof(struct Node));
+    n->data = x;
+    n->left = n->right = NULL;
+    return n;
+}
+
+struct Node* insert(struct Node* root, int x) {
+    if (!root) return createNode(x);
+
+    if (x < root->data)
+        root->left = insert(root->left, x);
+    else
+        root->right = insert(root->right, x);
+
+    return root;
+}
+
+
+void inorder(struct Node* root) {
+    if (!root) return;
+    inorder(root->left);
+    printf("%d ", root->data);
+    inorder(root->right);
+}
+
+void preorder(struct Node* root) {
+    if (!root) return;
+    printf("%d ", root->data);
+    preorder(root->left);
+    preorder(root->right);
+}
+
+void postorder(struct Node* root) {
+    if (!root) return;
+    postorder(root->left);
+    postorder(root->right);
+    printf("%d ", root->data);
+}
+
+
+void bfs(struct Node* root) {
+    if (!root) return;
+
+    struct Node* q[100];
+    int front = 0, rear = 0;
+
+    q[rear++] = root;
+
+    while (front < rear) {
+        struct Node* temp = q[front++];
+        printf("%d ", temp->data);
+
+        if (temp->left)  q[rear++] = temp->left;
+        if (temp->right) q[rear++] = temp->right;
+    }
+}
+
+
+void dfs(struct Node* root) {
+    if (!root) return;
+
+    struct Node* stack[100];
+    int top = -1;
+
+    stack[++top] = root;
+
+    while (top != -1) {
+        struct Node* temp = stack[top--];
+        printf("%d ", temp->data);
+
+        if (temp->right) stack[++top] = temp->right;
+        if (temp->left)  stack[++top] = temp->left;
+    }
+}
+
+struct Node* mirror(struct Node* root) {
+    if (!root) return NULL;
+
+    struct Node* temp = root->left;
+    root->left = root->right;
+    root->right = temp;
+
+    mirror(root->left);
+    mirror(root->right);
+
+    return root;
+}
+
+
+struct Node* parent(struct Node* root, int x) {
+    if (!root) return NULL;
+    if ((root->left && root->left->data == x) ||
+        (root->right && root->right->data == x))
+        return root;
+
+    if (x < root->data)
+        return parent(root->left, x);
+    else
+        return parent(root->right, x);
+}
+
+void children(struct Node* root, int x) {
+    if (!root) return;
+    if (root->data == x) {
+        if (root->left)  printf("Left child: %d\n", root->left->data);
+        else printf("Left child: None\n");
+
+        if (root->right) printf("Right child: %d\n", root->right->data);
+        else printf("Right child: None\n");
+    }
+    else if (x < root->data) children(root->left, x);
+    else children(root->right, x);
+}
+
+
+void sibling(struct Node* root, int x) {
+    struct Node* p = parent(root, x);
+    if (!p) { printf("No sibling\n"); return; }
+
+    if (p->left && p->left->data == x && p->right)
+        printf("Sibling: %d\n", p->right->data);
+    else if (p->right && p->right->data == x && p->left)
+        printf("Sibling: %d\n", p->left->data);
+    else
+        printf("No sibling\n");
+}
+
+
+void grandparent(struct Node* root, int x) {
+    struct Node* p = parent(root, x);
+    if (!p) { printf("No GP\n"); return; }
+    struct Node* gp = parent(root, p->data);
+    if (gp) printf("Grandparent: %d\n", gp->data);
+    else printf("No GP\n");
+}
+
+
+void uncle(struct Node* root, int x) {
+    struct Node* p = parent(root, x);
+    if (!p) { printf("No uncle\n"); return; }
+
+    struct Node* gp = parent(root, p->data);
+    if (!gp) { printf("No uncle\n"); return; }
+
+    if (gp->left && gp->left->data == p->data && gp->right)
+        printf("Uncle: %d\n", gp->right->data);
+    else if (gp->right && gp->right->data == p->data && gp->left)
+        printf("Uncle: %d\n", gp->left->data);
+    else
+        printf("No uncle\n");
+}
+
+int main() {
+    struct Node* root = NULL;
+    int ch, x;
+
+    while (1) {
+        printf("\n1.Insert  2.Inorder  3.Preorder  4.Postorder\n");
+        printf("5.BFS  6.DFS  7.Mirror  8.Parent  9.Children\n");
+        printf("10.Sibling  11.GP  12.Uncle  13.Exit\n");
+
+        scanf("%d", &ch);
+
+        switch (ch) {
+            case 1:
+                scanf("%d", &x);
+                root = insert(root, x);
+                break;
+            case 2: inorder(root); break;
+            case 3: preorder(root); break;
+            case 4: postorder(root); break;
+            case 5: bfs(root); break;
+            case 6: dfs(root); break;
+            case 7: root = mirror(root); break;
+            case 8:
+                scanf("%d", &x);
+                struct Node* p = parent(root, x);
+                if (p) printf("Parent: %d\n", p->data);
+                else printf("No parent\n");
+                break;
+            case 9:
+                scanf("%d", &x);
+                children(root, x);
+                break;
+            case 10:
+                scanf("%d", &x);
+                sibling(root, x);
+                break;
+            case 11:
+                scanf("%d", &x);
+                grandparent(root, x);
+                break;
+            case 12:
+                scanf("%d", &x);
+                uncle(root, x);
+                break;
+            case 13:
+                exit(0);
+        }
+    }
+}
