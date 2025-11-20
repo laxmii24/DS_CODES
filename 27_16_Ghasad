@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node *left, *right;
+};
+
+struct Node* createNode(int data) {
+    struct Node* newnode = (struct Node*) malloc(sizeof(struct Node));
+    newnode->data = data;
+    newnode->left = newnode->right = NULL;
+    return newnode;
+}
+
+struct Node* insert(struct Node* root, int data) {
+    if (root == NULL)
+        return createNode(data);
+
+    if (data < root->data)
+        root->left = insert(root->left, data);
+    else
+        root->right = insert(root->right, data);
+
+    return root;
+}
+
+
+int findMin(struct Node* root) {
+    if (!root) return -1;
+    while (root->left != NULL)
+        root = root->left;
+    return root->data;
+}
+
+
+int findMax(struct Node* root) {
+    if (!root) return -1;
+    while (root->right != NULL)
+        root = root->right;
+    return root->data;
+}
+
+int main() {
+    struct Node* root = NULL;
+    int n, x;
+
+    printf("Enter number of nodes: ");
+    scanf("%d", &n);
+
+    printf("Enter values: ");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &x);
+        root = insert(root, x);
+    }
+
+    printf("Minimum element = %d\n", findMin(root));
+    printf("Maximum element = %d\n", findMax(root));
+
+    return 0;
+}
