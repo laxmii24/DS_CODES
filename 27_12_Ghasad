@@ -1,0 +1,212 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* head = NULL;
+
+
+struct Node* createNode(int x) {
+    struct Node* n = (struct Node*)malloc(sizeof(struct Node));
+    n->data = x;
+    n->next = NULL;
+    return n;
+}
+
+
+
+void insertEnd(int x) {
+    struct Node* n = createNode(x);
+    if (!head) {
+        head = n;
+        return;
+    }
+    struct Node* t = head;
+    while (t->next) t = t->next;
+    t->next = n;
+}
+
+
+void deleteValue(int x) {
+    if (!head) return;
+    struct Node *t = head, *prev = NULL;
+
+    if (t->data == x) {
+        head = t->next;
+        free(t);
+        return;
+    }
+
+    while (t && t->data != x) {
+        prev = t;
+        t = t->next;
+    }
+
+    if (t) {
+        prev->next = t->next;
+        free(t);
+    }
+}
+
+
+void reverse() {
+    struct Node *prev = NULL, *curr = head, *next = NULL;
+    while (curr) {
+        next = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr = next;
+    }
+    head = prev;
+}
+
+
+void findMiddle() {
+    struct Node *slow = head, *fast = head;
+    if (!head) return;
+
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    printf("Middle element: %d\n", slow->data);
+}
+
+
+void sortList() {
+    struct Node *i, *j;
+    for (i = head; i; i = i->next) {
+        for (j = i->next; j; j = j->next) {
+            if (i->data > j->data) {
+                int temp = i->data;
+                i->data = j->data;
+                j->data = temp;
+            }
+        }
+    }
+}
+
+
+void detectLoop() {
+    struct Node *slow = head, *fast = head;
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+        if (slow == fast) {
+            printf("Loop detected\n");
+            return;
+        }
+    }
+    printf("No loop\n");
+}
+
+
+void sumList() {
+    int sum = 0;
+    struct Node *t = head;
+    while (t) {
+        sum += t->data;
+        t = t->next;
+    }
+    printf("Sum of nodes = %d\n", sum);
+}
+
+
+void printOddEven() {
+    struct Node *t = head;
+    printf("Odd values: ");
+    while (t) {
+        if (t->data % 2 != 0) printf("%d ", t->data);
+        t = t->next;
+    }
+    t = head;
+    printf("\nEven values: ");
+    while (t) {
+        if (t->data % 2 == 0) printf("%d ", t->data);
+        t = t->next;
+    }
+    printf("\n");
+}
+
+
+struct Node* merge(struct Node* a, struct Node* b) {
+    if (!a) return b;
+    if (!b) return a;
+
+    if (a->data < b->data) {
+        a->next = merge(a->next, b);
+        return a;
+    } else {
+        b->next = merge(a, b->next);
+        return b;
+    }
+}
+
+void display() {
+    struct Node *t = head;
+    printf("List: ");
+    while (t) {
+        printf("%d ", t->data);
+        t = t->next;
+    }
+    printf("\n");
+}
+
+int main() {
+    int ch, x;
+
+    while (1) {
+        printf("\n1.Insert  2.Delete  3.Display  4.Reverse\n");
+        printf("5.Middle  6.Sort  7.Sum  8.Odd/Even\n");
+        printf("9.Detect Loop  10.Exit\n");
+        scanf("%d", &ch);
+
+        switch (ch) {
+            case 1:
+                printf("Enter value: ");
+                scanf("%d", &x);
+                insertEnd(x);
+                break;
+
+            case 2:
+                printf("Delete value: ");
+                scanf("%d", &x);
+                deleteValue(x);
+                break;
+
+            case 3:
+                display();
+                break;
+
+            case 4:
+                reverse();
+                break;
+
+            case 5:
+                findMiddle();
+                break;
+
+            case 6:
+                sortList();
+                break;
+
+            case 7:
+                sumList();
+                break;
+
+            case 8:
+                printOddEven();
+                break;
+
+            case 9:
+                detectLoop();
+                break;
+
+            case 10:
+                exit(0);
+        }
+    }
+}
