@@ -2,10 +2,10 @@
 #define SIZE 10
 
 int arr[SIZE];
-int top1 = -1;         // Top of Stack 1
-int top2 = SIZE;       // Top of Stack 2
+int top1 = -1;         
+int top2 = SIZE;       
 
-// Push in Stack 1
+
 void push1(int value) {
     if (top1 + 1 == top2) {
         printf("Overflow! No space.\n");
@@ -16,7 +16,7 @@ void push1(int value) {
     printf("%d pushed in Stack 1\n", value);
 }
 
-// Push in Stack 2
+
 void push2(int value) {
     if (top2 - 1 == top1) {
         printf("Overflow! No space.\n");
@@ -27,7 +27,7 @@ void push2(int value) {
     printf("%d pushed in Stack 2\n", value);
 }
 
-// Pop from Stack 1
+
 void pop1() {
     if (top1 == -1) {
         printf("Stack 1 Underflow!\n");
@@ -37,7 +37,7 @@ void pop1() {
     top1--;
 }
 
-// Pop from Stack 2
+
 void pop2() {
     if (top2 == SIZE) {
         printf("Stack 2 Underflow!\n");
@@ -58,3 +58,4 @@ int main() {
 
     return 0;
 }
+
